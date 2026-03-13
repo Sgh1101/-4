@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  html, body {
+    @apply h-full overflow-hidden bg-stone-50;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  #root {
+    @apply h-full;
+  }
+
+  /* Allow text selection only in specific areas */
+  .selectable {
+    user-select: text;
+  }
+
+  /* Smooth scrolling for content areas */
+  .scroll-container {
+    @apply overflow-y-auto overflow-x-hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}

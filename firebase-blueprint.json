@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "Notice": {
+      "title": "Notice",
+      "description": "School or class announcements",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "link": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "createdAt"]
+    },
+    "Assessment": {
+      "title": "Assessment",
+      "description": "Performance assessment details",
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string" },
+        "title": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "description": { "type": "string" }
+      },
+      "required": ["subject", "title", "dueDate"]
+    },
+    "ExamScope": {
+      "title": "ExamScope",
+      "description": "Scope for upcoming exams",
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string" },
+        "scope": { "type": "string" },
+        "examType": { "type": "string", "enum": ["1-mid", "1-final", "2-mid", "2-final"] }
+      },
+      "required": ["subject", "scope", "examType"]
+    },
+    "ExamDate": {
+      "title": "ExamDate",
+      "description": "Dates for D-Day calculation",
+      "type": "object",
+      "properties": {
+        "eventName": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      },
+      "required": ["eventName", "date"]
+    },
+    "Birthday": {
+      "title": "Birthday",
+      "description": "Birthdays of students and teachers",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["student", "teacher"] }
+      },
+      "required": ["name", "date", "type"]
+    },
+    "UserRequest": {
+      "title": "UserRequest",
+      "description": "Requests for content addition or modification",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "chatLink": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "in-progress", "completed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "status", "createdAt"]
+    },
+    "SchoolEvent": {
+      "title": "SchoolEvent",
+      "description": "General school or class events",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "description": { "type": "string" }
+      },
+      "required": ["title", "date"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global app settings",
+      "type": "object",
+      "properties": {
+        "timetableLink": { "type": "string" },
+        "schoolLink": { "type": "string" }
+      }
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User roles and info",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
+      },
+      "required": ["email", "role"]
+    },
+    "PeUniformDay": {
+      "title": "PeUniformDay",
+      "description": "Days when students need to bring PE uniforms",
+      "type": "object",
+      "properties": {
+        "dayOfWeek": { "type": "string", "enum": ["월", "화", "수", "목", "금"] },
+        "note": { "type": "string" }
+      },
+      "required": ["dayOfWeek"]
+    }
+  },
+  "firestore": {
+    "notices": { "schema": "Notice", "description": "Collection of notices" },
+    "assessments": { "schema": "Assessment", "description": "Collection of performance assessments" },
+    "examScopes": { "schema": "ExamScope", "description": "Collection of exam scopes" },
+    "examDates": { "schema": "ExamDate", "description": "Collection of exam dates for D-Day" },
+    "birthdays": { "schema": "Birthday", "description": "Collection of birthdays" },
+    "requests": { "schema": "UserRequest", "description": "Collection of user requests" },
+    "schoolEvents": { "schema": "SchoolEvent", "description": "Collection of school events" },
+    "settings": { "schema": "Settings", "description": "Global settings like timetable link" },
+    "users": { "schema": "UserProfile", "description": "Collection of user profiles" },
+    "peUniformDays": { "schema": "PeUniformDay", "description": "Collection of PE uniform days" }
+  }
+}

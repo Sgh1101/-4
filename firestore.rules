@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: notices
+    // Fields: title (string), content (string), link (string), createdAt (timestamp)
+    //
+    // Collection: assessments
+    // Fields: subject (string), title (string), dueDate (string), description (string)
+    //
+    // Collection: examScopes
+    // Fields: subject (string), scope (string)
+    //
+    // Collection: examDates
+    // Fields: eventName (string), date (string)
+    //
+    // Collection: birthdays
+    // Fields: name (string), date (string), type (string: student|teacher)
+    //
+    // Collection: requests
+    // Fields: content (string), status (string: pending|in-progress|completed), createdAt (timestamp)
+    //
+    // Collection: users
+    // Fields: email (string), role (string: admin|user)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "joeunchan1228@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidNotice(data) {
+      return data.keys().hasAll(['title', 'content', 'createdAt']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 5000;
+    }
+
+    function isValidAssessment(data) {
+      return data.keys().hasAll(['subject', 'title', 'dueDate']) &&
+             data.subject is string && data.title is string && data.dueDate is string;
+    }
+
+    function isValidRequest(data) {
+      return data.keys().hasAll(['content', 'status', 'createdAt']) &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 1000 &&
+             data.status in ['pending', 'in-progress', 'completed'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || (isAuthenticated() && request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidNotice(request.resource.data);
+    }
+
+    match /assessments/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidAssessment(request.resource.data);
+    }
+
+    match /examScopes/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /examDates/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /birthdays/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /schoolEvents/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /peUniformDays/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /requests/{id} {
+      allow read: if true;
+      allow create: if isValidRequest(request.resource.data);
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if isAdmin();
+    }
+  }
+}
